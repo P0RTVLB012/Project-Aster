@@ -7,10 +7,17 @@ function checkCode() {
         const lockScreen = document.getElementById("lock-screen");
         if (lockScreen) lockScreen.remove();
 
-        // Dynamically load Unity loader
-        const loaderScript = document.createElement("script");
-        loaderScript.src = "Build/ProjectAster.loader.js";
-        document.body.appendChild(loaderScript);
+        // Dynamically load UnityLoader.js if not already loaded
+        if (typeof UnityLoader === "undefined") {
+            const loaderScript = document.createElement("script");
+            loaderScript.src = "Build/UnityLoader.js";
+            loaderScript.onload = function () {
+                UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
+            };
+            document.body.appendChild(loaderScript);
+        } else {
+            UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
+        }
     } else {
         const error = document.getElementById("error");
         if (error) error.style.display = "block";
