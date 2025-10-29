@@ -1,39 +1,15 @@
-const CORRECT_CODE = "@ster"; // your access code
+<body style="overflow:hidden;padding:0;margin:0;">
+    <!-- Lock screen overlay -->
+    <div id="lock-screen">
+        <h1>Enter Access Code</h1>
+        <input type="password" id="access-code" placeholder="Access Code" autofocus>
+        <button id="unlock-btn">Unlock</button>
+        <p id="error" style="color:red;margin-top:10px;display:none;">Wrong code!</p>
+    </div>
 
-function checkCode() {
-    const input = document.getElementById("access-code").value;
-    if (input === CORRECT_CODE) {
-        // Hide lock screen
-        const lockScreen = document.getElementById("lock-screen");
-        if (lockScreen) lockScreen.remove();
+    <!-- Game container -->
+    <div id="gameContainer" style="width:960px;height:600px;margin:auto;"></div>
 
-        // Dynamically load UnityLoader.js if not already loaded
-        if (typeof UnityLoader === "undefined") {
-            const loaderScript = document.createElement("script");
-            loaderScript.src = "Build/UnityLoader.js";
-            loaderScript.onload = function () {
-                UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
-            };
-            document.body.appendChild(loaderScript);
-        } else {
-            UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
-        }
-    } else {
-        const error = document.getElementById("error");
-        if (error) error.style.display = "block";
-    }
-}
-
-window.addEventListener('DOMContentLoaded', function() {
-    const unlockBtn = document.getElementById('unlock-btn');
-    if (unlockBtn) unlockBtn.addEventListener('click', checkCode);
-
-    const codeInput = document.getElementById("access-code");
-    if (codeInput) {
-        codeInput.addEventListener("keydown", function(e) {
-            if (e.key === "Enter") {
-                checkCode();
-            }
-        });
-    }
-});
+    <!-- Only your lock-screen.js -->
+    <script src="lock-screen.js"></script>
+</body>
