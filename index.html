@@ -95,13 +95,17 @@
 <script>
 const CORRECT_CODE = "@ster"; // access code
 
-// function to resize Unity canvas
+// resize Unity canvas
 function resizeUnityCanvas() {
     const canvas = document.querySelector("#gameContainer canvas");
     if (canvas) {
         canvas.style.width = "100%";
         canvas.style.height = "100%";
         canvas.style.display = "block";
+
+        // remove any click handlers that open new tabs
+        const clone = canvas.cloneNode(true);
+        canvas.parentNode.replaceChild(clone, canvas);
     }
 }
 
