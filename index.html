@@ -11,8 +11,8 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: radial-gradient(circle at center, #0a0a0a, #111);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #111;
+            font-family: sans-serif;
         }
 
         #lock-screen {
@@ -26,12 +26,6 @@
             align-items: center;
             flex-direction: column;
             z-index: 10;
-            animation: pulse 2s infinite alternate;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 20px #00ffff; }
-            100% { box-shadow: 0 0 60px #00ffff; }
         }
 
         #lock-screen input {
@@ -77,7 +71,7 @@
         }
     </style>
 </head>
-<body style="overflow:hidden;padding:0;margin:0;">
+<body>
 
 <!-- Lock screen overlay -->
 <div id="lock-screen">
@@ -95,28 +89,30 @@
 <script>
 const CORRECT_CODE = "@ster"; // access code
 
-// resize Unity canvas
-function resizeUnityCanvas() {
+function blockUnityTab() {
     const canvas = document.querySelector("#gameContainer canvas");
-    if (canvas) {
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-        canvas.style.display = "block";
+    if (!canvas) return;
 
-        // remove any click handlers that open new tabs
-        const clone = canvas.cloneNode(true);
-        canvas.parentNode.replaceChild(clone, canvas);
-    }
+    // force canvas to fill container
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.display = "block";
+
+    // remove any click handlers that might open a new tab
+    const clone = canvas.cloneNode(true);
+    canvas.parentNode.replaceChild(clone, canvas);
+
+    // override window.open globally
+    window.open = function() { return null; };
 }
 
-// check code and load Unity
 function checkCode() {
     const input = document.getElementById("access-code").value;
     if (input === CORRECT_CODE) {
         const lockScreen = document.getElementById("lock-screen");
         if (lockScreen) lockScreen.remove();
 
-        // ensure game container fills window
+        // resize game container
         function resizeGame() {
             const gameContainer = document.getElementById("gameContainer");
             if (gameContainer) {
@@ -124,7 +120,7 @@ function checkCode() {
                 gameContainer.style.height = window.innerHeight + "px";
             }
         }
-        window.addEventListener("resize", () => { resizeGame(); resizeUnityCanvas(); });
+        window.addEventListener("resize", () => { resizeGame(); blockUnityTab(); });
         resizeGame();
 
         // load Unity
@@ -133,12 +129,12 @@ function checkCode() {
             loaderScript.src = "Build/UnityLoader.js";
             loaderScript.onload = function () {
                 const unityInstance = UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
-                unityInstance.then(resizeUnityCanvas);
+                unityInstance.then(blockUnityTab);
             };
             document.body.appendChild(loaderScript);
         } else {
             const unityInstance = UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
-            unityInstance.then(resizeUnityCanvas);
+            unityInstance.then(blockUnityTab);
         }
     } else {
         const error = document.getElementById("error");
@@ -146,7 +142,6 @@ function checkCode() {
     }
 }
 
-// event listeners
 window.addEventListener('DOMContentLoaded', function() {
     const unlockBtn = document.getElementById('unlock-btn');
     if (unlockBtn) unlockBtn.addEventListener('click', checkCode);
@@ -154,9 +149,7 @@ window.addEventListener('DOMContentLoaded', function() {
     const codeInput = document.getElementById("access-code");
     if (codeInput) {
         codeInput.addEventListener("keydown", function(e) {
-            if (e.key === "Enter") {
-                checkCode();
-            }
+            if (e.key === "Enter") checkCode();
         });
     }
 });
