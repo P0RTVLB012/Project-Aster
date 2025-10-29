@@ -11,34 +11,54 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #111;
+            background: radial-gradient(circle at center, #0a0a0a, #111);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         #lock-screen {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: #111;
-            color: #fff;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            color: #00ffff;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            font-family: sans-serif;
             z-index: 10;
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px #00ffff; }
+            100% { box-shadow: 0 0 60px #00ffff; }
         }
 
         #lock-screen input {
-            padding: 10px;
-            font-size: 16px;
-            margin-top: 10px;
+            padding: 12px;
+            font-size: 18px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            width: 200px;
+            text-align: center;
         }
 
         #lock-screen button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
+            margin-top: 12px;
+            padding: 12px 24px;
+            font-size: 18px;
             cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #00ffff;
+            color: #111;
+            font-weight: bold;
+        }
+
+        #lock-screen button:hover {
+            background-color: #00aaaa;
         }
 
         #gameContainer {
@@ -55,4 +75,50 @@
 <div id="lock-screen">
     <h1>Enter Access Code</h1>
     <input type="password" id="access-code" placeholder="Access Code" autofocus>
-    <button type="button" id="unlock-bt
+    <button type="button" id="unlock-btn">Unlock</button>
+    <p id="error" style="color:red;margin-top:10px;display:none;">Wrong code!</p>
+</div>
+
+<!-- Game container -->
+<div id="gameContainer"></div>
+
+<script>
+const CORRECT_CODE = "@ster"; // your access code
+
+function checkCode() {
+    const input = document.getElementById("access-code").value;
+    if (input === CORRECT_CODE) {
+        // Hide lock screen
+        const lockScreen = document.getElementById("lock-screen");
+        if (lockScreen) lockScreen.remove();
+
+        // Resize game container to fill window
+        function resizeGame() {
+            const gameContainer = document.getElementById("gameContainer");
+            if (gameContainer) {
+                gameContainer.style.width = window.innerWidth + "px";
+                gameContainer.style.height = window.innerHeight + "px";
+            }
+        }
+        window.addEventListener("resize", resizeGame);
+        resizeGame();
+
+        // Dynamically load UnityLoader.js
+        if (typeof UnityLoader === "undefined") {
+            const loaderScript = document.createElement("script");
+            loaderScript.src = "Build/UnityLoader.js"; // adjust path if needed
+            loaderScript.onload = function () {
+                UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
+            };
+            document.body.appendChild(loaderScript);
+        } else {
+            UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
+        }
+    } else {
+        const error = document.getElementById("error");
+        if (error) error.style.display = "block";
+    }
+}
+
+// Event listeners for button and Enter key
+window.addEventListener('DOMContentLoaded', f
