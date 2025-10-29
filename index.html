@@ -11,10 +11,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Your Name">
     <meta name="keywords" content="Snow Rider 3D, skiing game, winter sports, snowboarding, ski game, mountain landscapes, skiing adventure, snowboarding adventure, snowy mountain, sleigh ride, winter game">
-    <script src="TemplateData/UnityProgress.js"></script>
-    <script src="Build/UnityLoader.js"></script>
+
     <script>
-        var gameInstance = UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json", {onProgress: UnityProgress,Module:{onRuntimeInitialized: function() {UnityProgress(gameInstance, "complete")}}});
+      // Simple client-side gate (still visible to users -> use server-side auth for real protection)
+      (function() {
+        const ACCESS_CODE = "@ster"; // visible in source - not secure
+        const input = prompt("Enter access code to continue:");
+        if (input !== ACCESS_CODE) {
+          document.addEventListener('DOMContentLoaded', function() {
+            document.body.innerHTML = "<h1 style='text-align:center;margin-top:20%;color:red;'>ACCESS DENIED</h1>";
+          });
+          return;
+        }
+
+        // Load Unity support scripts only after authorization
+        function loadScript(src) {
+          return new Promise(function(resolve, reject) {
+            const s = document.createElement('script');
+            s.src = src;
+            s.onload = resolve;
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+
+        Promise.all([
+          loadScript('TemplateData/UnityProgress.js'),
+          loadScript('Build/UnityLoader.js')
+        ]).then(function() {
+          // Instantiate after DOM is ready so the gameContainer exists
+          function startUnity() {
+            window.gameInstance = UnityLoader.instantiate(
+              "gameContainer",
+              "Build/SnowRider3D-gd-1.json",
+              {
+                onProgress: UnityProgress,
+                Module: {
+                  onRuntimeInitialized: function() {
+                    UnityProgress(window.gameInstance, "complete");
+                  }
+                }
+              }
+            );
+          }
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startUnity);
+          } else {
+            startUnity();
+          }
+        }).catch(function(err) {
+          console.error('Failed to load Unity scripts', err);
+          document.addEventListener('DOMContentLoaded', function() {
+            document.body.innerHTML = "<h1 style='text-align:center;margin-top:20%;color:red;'>LOAD ERROR</h1>";
+          });
+        });
+      })();
     </script>
 </head>
 <body style="overflow:hidden;padding:0px;margin:0px;">
@@ -23,4 +74,3 @@
     </div>
 </body>
 </html>
-
