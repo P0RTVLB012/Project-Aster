@@ -143,7 +143,7 @@
 <div id="game-library">
     <h1>Project Aster</h1>
     <p class="subtitle">Select a game to play</p>
-
+    
     <div class="games-grid">
         <a href="games/snow-rider/index.html" class="game-card">
             <div class="game-icon">🏂</div>
@@ -167,7 +167,7 @@ function checkCode() {
     if (input === CORRECT_CODE) {
         const lockScreen = document.getElementById("lock-screen");
         const gameLibrary = document.getElementById("game-library");
-
+        
         if (lockScreen) lockScreen.style.display = "none";
         if (gameLibrary) gameLibrary.classList.add("unlocked");
     } else {
