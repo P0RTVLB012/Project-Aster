@@ -1,0 +1,3 @@
+[submodule "games/cookie-clicker"]
+	path = games/cookie-clicker
+	url = https://github.com/itsvijaysingh/Cookie-Clicker.git
