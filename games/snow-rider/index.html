@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project-Aster</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #111;
+            font-family: sans-serif;
+        }
+
+        #lock-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            color: #00ffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        #lock-screen input {
+            padding: 12px;
+            font-size: 18px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            width: 200px;
+            text-align: center;
+        }
+
+        #lock-screen button {
+            margin-top: 12px;
+            padding: 12px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #00ffff;
+            color: #111;
+            font-weight: bold;
+        }
+
+        #lock-screen button:hover {
+            background-color: #00aaaa;
+        }
+
+        .webgl-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #gameContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Lock screen overlay -->
+<div id="lock-screen">
+    <h1>Enter Access Code</h1>
+    <input type="password" id="access-code" placeholder="Access Code" autofocus>
+    <button type="button" id="unlock-btn">Unlock</button>
+    <p id="error" style="color:red;margin-top:10px;display:none;">Wrong code!</p>
+</div>
+
+<!-- Game container -->
+<div class="webgl-content">
+    <div id="gameContainer"></div>
+</div>
+
+<script>
+const CORRECT_CODE = "@ster"; // access code
+
+function blockUnityTab() {
+    const canvas = document.querySelector("#gameContainer canvas");
+    if (!canvas) return;
+
+    // force canvas to fill container
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.display = "block";
+
+    // remove any click handlers that might open a new tab
+    const clone = canvas.cloneNode(true);
+    canvas.parentNode.replaceChild(clone, canvas);
+
+    // override window.open globally
+    window.open = function() { return null; };
+}
+
+function checkCode() {
+    const input = document.getElementById("access-code").value;
+    if (input === CORRECT_CODE) {
+        const lockScreen = document.getElementById("lock-screen");
+        if (lockScreen) lockScreen.remove();
+
+        // resize game container
+        function resizeGame() {
+            const gameContainer = document.getElementById("gameContainer");
+            if (gameContainer) {
+                gameContainer.style.width = window.innerWidth + "px";
+                gameContainer.style.height = window.innerHeight + "px";
+            }
+        }
+        window.addEventListener("resize", () => { resizeGame(); blockUnityTab(); });
+        resizeGame();
+
+        // load Unity
+        if (typeof UnityLoader === "undefined") {
+            const loaderScript = document.createElement("script");
+            loaderScript.src = "Build/UnityLoader.js";
+            loaderScript.onload = function () {
+                const unityInstance = UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
+                unityInstance.then(blockUnityTab);
+            };
+            document.body.appendChild(loaderScript);
+        } else {
+            const unityInstance = UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
+            unityInstance.then(blockUnityTab);
+        }
+    } else {
+        const error = document.getElementById("error");
+        if (error) error.style.display = "block";
+    }
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+    const unlockBtn = document.getElementById('unlock-btn');
+    if (unlockBtn) unlockBtn.addEventListener('click', checkCode);
+
+    const codeInput = document.getElementById("access-code");
+    if (codeInput) {
+        codeInput.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") checkCode();
+        });
+    }
+});
+</script>
+
+</body>
+</html>

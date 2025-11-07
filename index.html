@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Project-Aster</title>
+    <title>Project Aster - Game Archive</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         html, body {
@@ -55,19 +55,76 @@
             background-color: #00aaaa;
         }
 
-        .webgl-content {
+        #game-library {
+            display: none;
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            color: #00ffff;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
 
-        #gameContainer {
-            width: 100%;
-            height: 100%;
-            margin: 0;
+        #game-library.unlocked {
             display: block;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px #00ffff;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: #888;
+            margin-bottom: 50px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: rgba(0, 255, 255, 0.05);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: #00ffff;
+            display: block;
+        }
+
+        .game-card:hover {
+            background: rgba(0, 255, 255, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .game-card h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .game-card p {
+            font-size: 16px;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        .game-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -75,67 +132,44 @@
 
 <!-- Lock screen overlay -->
 <div id="lock-screen">
-    <h1>Enter Access Code</h1>
+    <h1>Project Aster</h1>
+    <p style="color: #888;">Game Archive</p>
     <input type="password" id="access-code" placeholder="Access Code" autofocus>
     <button type="button" id="unlock-btn">Unlock</button>
     <p id="error" style="color:red;margin-top:10px;display:none;">Wrong code!</p>
 </div>
 
-<!-- Game container -->
-<div class="webgl-content">
-    <div id="gameContainer"></div>
+<!-- Game library -->
+<div id="game-library">
+    <h1>Project Aster</h1>
+    <p class="subtitle">Select a game to play</p>
+
+    <div class="games-grid">
+        <a href="games/snow-rider/index.html" class="game-card">
+            <div class="game-icon">🏂</div>
+            <h2>Snow Rider 3D</h2>
+            <p>Race down snowy mountains, dodge obstacles, and perform epic tricks in this thrilling 3D snowboarding game.</p>
+        </a>
+
+        <a href="games/cookie-clicker/index.html" class="game-card">
+            <div class="game-icon">🍪</div>
+            <h2>Cookie Clicker</h2>
+            <p>Click cookies to bake more cookies. Build your cookie empire with upgrades and automation in this addictive idle game.</p>
+        </a>
+    </div>
 </div>
 
 <script>
-const CORRECT_CODE = "@ster"; // access code
-
-function blockUnityTab() {
-    const canvas = document.querySelector("#gameContainer canvas");
-    if (!canvas) return;
-
-    // force canvas to fill container
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    canvas.style.display = "block";
-
-    // remove any click handlers that might open a new tab
-    const clone = canvas.cloneNode(true);
-    canvas.parentNode.replaceChild(clone, canvas);
-
-    // override window.open globally
-    window.open = function() { return null; };
-}
+const CORRECT_CODE = "@ster";
 
 function checkCode() {
     const input = document.getElementById("access-code").value;
     if (input === CORRECT_CODE) {
         const lockScreen = document.getElementById("lock-screen");
-        if (lockScreen) lockScreen.remove();
+        const gameLibrary = document.getElementById("game-library");
 
-        // resize game container
-        function resizeGame() {
-            const gameContainer = document.getElementById("gameContainer");
-            if (gameContainer) {
-                gameContainer.style.width = window.innerWidth + "px";
-                gameContainer.style.height = window.innerHeight + "px";
-            }
-        }
-        window.addEventListener("resize", () => { resizeGame(); blockUnityTab(); });
-        resizeGame();
-
-        // load Unity
-        if (typeof UnityLoader === "undefined") {
-            const loaderScript = document.createElement("script");
-            loaderScript.src = "Build/UnityLoader.js";
-            loaderScript.onload = function () {
-                const unityInstance = UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
-                unityInstance.then(blockUnityTab);
-            };
-            document.body.appendChild(loaderScript);
-        } else {
-            const unityInstance = UnityLoader.instantiate("gameContainer", "Build/SnowRider3D-gd-1.json");
-            unityInstance.then(blockUnityTab);
-        }
+        if (lockScreen) lockScreen.style.display = "none";
+        if (gameLibrary) gameLibrary.classList.add("unlocked");
     } else {
         const error = document.getElementById("error");
         if (error) error.style.display = "block";
