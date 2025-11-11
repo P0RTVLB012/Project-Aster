@@ -179,7 +179,7 @@
             display: none;
         }
 
-        /* Main App (hidden until login) */
+        /* Main App */
         #main-app {
             display: none;
             width: 100%;
@@ -187,26 +187,223 @@
         }
 
         #main-app.active {
-            display: block;
+            display: flex;
         }
 
-        .welcome-screen {
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            height: 100%;
+            background: rgba(167, 139, 250, 0.1);
+            border-right: 2px solid #A78BFA;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 20px;
+        }
+
+        .sidebar-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid #A78BFA;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100%;
-            flex-direction: column;
-        }
-
-        .welcome-screen h1 {
-            font-size: 64px;
-            text-shadow: 0 0 30px #8B5CF6;
-        }
-
-        .welcome-screen p {
             font-size: 24px;
-            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sidebar-icon:hover {
+            background: rgba(139, 92, 246, 0.4);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+        }
+
+        .sidebar-icon.active {
+            background: rgba(167, 139, 250, 0.3);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+            padding: 40px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* Game Archive View */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            text-shadow: 0 0 20px #8B5CF6;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 18px;
             color: #888;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: rgba(167, 139, 250, 0.05);
+            border: 2px solid #A78BFA;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: #A78BFA;
+            display: block;
+        }
+
+        .game-card:hover {
+            background: rgba(167, 139, 250, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+        }
+
+        .game-card h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .game-card p {
+            font-size: 16px;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        .game-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        /* Console View */
+        .console-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .console-header h2 {
+            font-size: 36px;
+            text-shadow: 0 0 15px #8B5CF6;
+        }
+
+        .clear-log-btn {
+            padding: 10px 20px;
+            background: rgba(167, 139, 250, 0.2);
+            border: 2px solid #A78BFA;
+            border-radius: 5px;
+            color: #A78BFA;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .clear-log-btn:hover {
+            background: rgba(167, 139, 250, 0.3);
+        }
+
+        .console-log {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #A78BFA;
+            border-radius: 10px;
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .log-entry {
+            padding: 8px;
+            border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+            display: flex;
+            gap: 10px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #888;
+            min-width: 80px;
+        }
+
+        .log-message {
+            color: #C4B5FD;
+        }
+
+        .log-entry.info .log-message {
+            color: #A78BFA;
+        }
+
+        .log-entry.success .log-message {
+            color: #44ff44;
+        }
+
+        .log-entry.error .log-message {
+            color: #ff4444;
+        }
+
+        /* User Info */
+        .user-info {
+            margin-top: auto;
+            padding: 15px;
+            background: rgba(167, 139, 250, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .logout-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: rgba(255, 68, 68, 0.2);
+            border: 2px solid #ff4444;
+            border-radius: 5px;
+            color: #ff4444;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 68, 68, 0.3);
         }
     </style>
 </head>
@@ -267,25 +464,93 @@
     </div>
 </div>
 
-<!-- Main App (after login) -->
+<!-- Main App -->
 <div id="main-app">
-    <div class="welcome-screen">
-        <h1>Welcome, <span id="username-display"></span>!</h1>
-        <p>This is where the sidebar interface will go</p>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-icon active" id="games-btn" title="Game Archive">🎮</div>
+        <div class="sidebar-icon" id="console-btn" title="Console">📋</div>
+        
+        <div class="user-info">
+            <div style="color: #A78BFA; margin-bottom: 5px;">Logged in as:</div>
+            <div id="sidebar-username" style="font-weight: bold; color: #C4B5FD;"></div>
+            <button class="logout-btn" id="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <!-- Game Archive View -->
+        <div class="view active" id="games-view">
+            <div class="header">
+                <h1>Game Archive</h1>
+                <p class="subtitle">Select a game to play</p>
+            </div>
+            
+            <div class="games-grid">
+                <a href="games/snow-rider/index.html" class="game-card">
+                    <div class="game-icon">🏂</div>
+                    <h2>Snow Rider 3D</h2>
+                    <p>Race down snowy mountains, dodge obstacles, and perform epic tricks in this thrilling 3D snowboarding game.</p>
+                </a>
+
+                <a href="games/cookie-clicker/index.html" class="game-card">
+                    <div class="game-icon">🍪</div>
+                    <h2>Cookie Clicker</h2>
+                    <p>Click cookies to bake more cookies. Build your cookie empire with upgrades and automation in this addictive idle game.</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Console View -->
+        <div class="view" id="console-view">
+            <div class="console-container">
+                <div class="console-header">
+                    <h2>Activity Console</h2>
+                    <button class="clear-log-btn" id="clear-log">Clear Log</button>
+                </div>
+                <div class="console-log" id="console-log">
+                    <div class="log-entry info">
+                        <span class="log-time">--:--:--</span>
+                        <span class="log-message">Console initialized. Waiting for activity...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
 const ACCESS_CODE = "@ster";
+let logEntries = [];
+
+// Logging function
+function addLog(message, type = 'info') {
+    const now = new Date();
+    const time = now.toLocaleTimeString();
+    const entry = { time, message, type };
+    logEntries.push(entry);
+    
+    const logDiv = document.getElementById('console-log');
+    if (logDiv) {
+        const entryDiv = document.createElement('div');
+        entryDiv.className = `log-entry ${type}`;
+        entryDiv.innerHTML = `<span class="log-time">${time}</span><span class="log-message">${message}</span>`;
+        logDiv.appendChild(entryDiv);
+        logDiv.scrollTop = logDiv.scrollHeight;
+    }
+}
 
 // Check if user is already logged in
 window.addEventListener('DOMContentLoaded', function() {
     const currentUser = localStorage.getItem('aster_currentUser');
     if (currentUser) {
-        // Skip to main app if already logged in
         document.getElementById('access-screen').classList.add('hidden');
         document.getElementById('main-app').classList.add('active');
-        document.getElementById('username-display').textContent = currentUser;
+        document.getElementById('sidebar-username').textContent = currentUser;
+        addLog(`User ${currentUser} resumed session`, 'success');
+    } else {
+        addLog('System started', 'info');
     }
 });
 
@@ -300,8 +565,10 @@ function checkAccessCode() {
     if (code === ACCESS_CODE) {
         document.getElementById('access-screen').classList.add('hidden');
         document.getElementById('login-screen').classList.add('active');
+        addLog('Access code accepted', 'success');
     } else {
         document.getElementById('access-error').style.display = 'block';
+        addLog('Invalid access code attempt', 'error');
     }
 }
 
@@ -311,12 +578,14 @@ document.getElementById('show-register').addEventListener('click', function() {
     document.getElementById('register-form').style.display = 'block';
     document.getElementById('register-error').style.display = 'none';
     document.getElementById('register-success').style.display = 'none';
+    addLog('Switched to registration form', 'info');
 });
 
 document.getElementById('show-login').addEventListener('click', function() {
     document.getElementById('register-form').style.display = 'none';
     document.getElementById('login-form').style.display = 'block';
     document.getElementById('login-error').style.display = 'none';
+    addLog('Switched to login form', 'info');
 });
 
 // Register
@@ -333,29 +602,30 @@ function registerUser() {
     if (!username || !password) {
         document.getElementById('register-error').textContent = 'Please fill all fields!';
         document.getElementById('register-error').style.display = 'block';
+        addLog('Registration failed: empty fields', 'error');
         return;
     }
 
     if (password !== confirm) {
         document.getElementById('register-error').textContent = 'Passwords don\'t match!';
         document.getElementById('register-error').style.display = 'block';
+        addLog('Registration failed: password mismatch', 'error');
         return;
     }
 
-    // Check if user already exists
     const existingUser = localStorage.getItem('aster_user_' + username);
     if (existingUser) {
         document.getElementById('register-error').textContent = 'Username already exists!';
         document.getElementById('register-error').style.display = 'block';
+        addLog(`Registration failed: username "${username}" already exists`, 'error');
         return;
     }
 
-    // Save user
     localStorage.setItem('aster_user_' + username, password);
     document.getElementById('register-error').style.display = 'none';
     document.getElementById('register-success').style.display = 'block';
+    addLog(`New user registered: ${username}`, 'success');
 
-    // Clear form
     setTimeout(function() {
         document.getElementById('register-username').value = '';
         document.getElementById('register-password').value = '';
@@ -377,23 +647,74 @@ function loginUser() {
     if (!username || !password) {
         document.getElementById('login-error').textContent = 'Please fill all fields!';
         document.getElementById('login-error').style.display = 'block';
+        addLog('Login failed: empty fields', 'error');
         return;
     }
 
-    // Check credentials
     const storedPassword = localStorage.getItem('aster_user_' + username);
-
+    
     if (storedPassword === password) {
-        // Login successful
         localStorage.setItem('aster_currentUser', username);
         document.getElementById('login-screen').classList.remove('active');
         document.getElementById('main-app').classList.add('active');
-        document.getElementById('username-display').textContent = username;
+        document.getElementById('sidebar-username').textContent = username;
+        addLog(`User ${username} logged in successfully`, 'success');
     } else {
         document.getElementById('login-error').textContent = 'Invalid username or password!';
         document.getElementById('login-error').style.display = 'block';
+        addLog(`Login failed for user: ${username}`, 'error');
     }
 }
+
+// Sidebar navigation
+document.getElementById('games-btn').addEventListener('click', function() {
+    switchView('games');
+    addLog('Switched to Game Archive', 'info');
+});
+
+document.getElementById('console-btn').addEventListener('click', function() {
+    switchView('console');
+    addLog('Opened Activity Console', 'info');
+});
+
+function switchView(view) {
+    // Remove active from all icons and views
+    document.querySelectorAll('.sidebar-icon').forEach(icon => icon.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    
+    // Add active to selected
+    if (view === 'games') {
+        document.getElementById('games-btn').classList.add('active');
+        document.getElementById('games-view').classList.add('active');
+    } else if (view === 'console') {
+        document.getElementById('console-btn').classList.add('active');
+        document.getElementById('console-view').classList.add('active');
+    }
+}
+
+// Clear log
+document.getElementById('clear-log').addEventListener('click', function() {
+    const logDiv = document.getElementById('console-log');
+    logDiv.innerHTML = '<div class="log-entry info"><span class="log-time">--:--:--</span><span class="log-message">Log cleared.</span></div>';
+    logEntries = [];
+    addLog('Console log cleared by user', 'info');
+});
+
+// Logout
+document.getElementById('logout-btn').addEventListener('click', function() {
+    const username = localStorage.getItem('aster_currentUser');
+    localStorage.removeItem('aster_currentUser');
+    addLog(`User ${username} logged out`, 'info');
+    location.reload();
+});
+
+// Track game clicks
+document.querySelectorAll('.game-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+        const gameName = this.querySelector('h2').textContent;
+        addLog(`Loading game: ${gameName}`, 'success');
+    });
+});
 </script>
 
 </body>
