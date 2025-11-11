@@ -2,191 +2,398 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Project Aster - Game Archive</title>
+    <title>Aster Archive</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        html, body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #111;
-            font-family: sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            font-family: 'Segoe UI', sans-serif;
+            color: #A78BFA;
         }
 
-        #lock-screen {
+        /* Access Code Screen */
+        #access-screen {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-            color: #00ffff;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            z-index: 10;
+            z-index: 100;
         }
 
-        #lock-screen input {
+        #access-screen.hidden {
+            display: none;
+        }
+
+        #access-screen h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px #8B5CF6;
+        }
+
+        #access-screen input {
             padding: 12px;
             font-size: 18px;
             margin-top: 12px;
-            border: none;
+            border: 2px solid #A78BFA;
             border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #C4B5FD;
             outline: none;
-            width: 200px;
+            width: 250px;
             text-align: center;
         }
 
-        #lock-screen button {
+        #access-screen button {
             margin-top: 12px;
             padding: 12px 24px;
             font-size: 18px;
             cursor: pointer;
             border: none;
             border-radius: 5px;
-            background-color: #00ffff;
+            background-color: #A78BFA;
             color: #111;
             font-weight: bold;
+            transition: all 0.3s;
         }
 
-        #lock-screen button:hover {
-            background-color: #00aaaa;
+        #access-screen button:hover {
+            background-color: #8B5CF6;
+            transform: scale(1.05);
         }
 
-        #game-library {
+        .error-msg {
+            color: #ff4444;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Login Screen */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99;
+        }
+
+        #login-screen.active {
+            display: flex;
+        }
+
+        .login-container {
+            background: rgba(167, 139, 250, 0.05);
+            border: 2px solid #A78BFA;
+            border-radius: 15px;
+            padding: 40px;
+            width: 400px;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            text-shadow: 0 0 15px #8B5CF6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #C4B5FD;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #A78BFA;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #C4B5FD;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #A78BFA;
+            color: #111;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: #8B5CF6;
+            transform: translateY(-2px);
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 20px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .toggle-form a {
+            color: #A78BFA;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+
+        .success-msg {
+            color: #44ff44;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Main App (hidden until login) */
+        #main-app {
             display: none;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-            color: #00ffff;
-            padding: 40px;
-            box-sizing: border-box;
-            overflow-y: auto;
         }
 
-        #game-library.unlocked {
+        #main-app.active {
             display: block;
         }
 
-        h1 {
-            text-align: center;
-            font-size: 48px;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px #00ffff;
+        .welcome-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            flex-direction: column;
         }
 
-        .subtitle {
-            text-align: center;
-            font-size: 18px;
-            color: #888;
-            margin-bottom: 50px;
-        }
-
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .game-card {
-            background: rgba(0, 255, 255, 0.05);
-            border: 2px solid #00ffff;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: #00ffff;
-            display: block;
-        }
-
-        .game-card:hover {
-            background: rgba(0, 255, 255, 0.15);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
-        }
-
-        .game-card h2 {
-            font-size: 32px;
-            margin-bottom: 15px;
-        }
-
-        .game-card p {
-            font-size: 16px;
-            color: #aaa;
-            line-height: 1.6;
-        }
-
-        .game-icon {
+        .welcome-screen h1 {
             font-size: 64px;
-            margin-bottom: 20px;
+            text-shadow: 0 0 30px #8B5CF6;
+        }
+
+        .welcome-screen p {
+            font-size: 24px;
+            margin-top: 20px;
+            color: #888;
         }
     </style>
 </head>
 <body>
 
-<!-- Lock screen overlay -->
-<div id="lock-screen">
-    <h1>Project Aster</h1>
-    <p style="color: #888;">Game Archive</p>
+<!-- Access Code Screen -->
+<div id="access-screen">
+    <h1>Aster Archive</h1>
+    <p style="color: #888; margin-bottom: 20px;">Enter Access Code</p>
     <input type="password" id="access-code" placeholder="Access Code" autofocus>
-    <button type="button" id="unlock-btn">Unlock</button>
-    <p id="error" style="color:red;margin-top:10px;display:none;">Wrong code!</p>
+    <button type="button" id="access-btn">Unlock</button>
+    <p class="error-msg" id="access-error">Invalid access code!</p>
 </div>
 
-<!-- Game library -->
-<div id="game-library">
-    <h1>Project Aster</h1>
-    <p class="subtitle">Select a game to play</p>
-    
-    <div class="games-grid">
-        <a href="games/snow-rider/index.html" class="game-card">
-            <div class="game-icon">🏂</div>
-            <h2>Snow Rider 3D</h2>
-            <p>Race down snowy mountains, dodge obstacles, and perform epic tricks in this thrilling 3D snowboarding game.</p>
-        </a>
+<!-- Login/Register Screen -->
+<div id="login-screen">
+    <div class="login-container">
+        <!-- Login Form -->
+        <div id="login-form">
+            <h2>Login</h2>
+            <div class="form-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter password">
+            </div>
+            <button class="btn-primary" id="login-btn">Login</button>
+            <p class="error-msg" id="login-error">Invalid credentials!</p>
+            <div class="toggle-form">
+                Don't have an account? <a id="show-register">Register here</a>
+            </div>
+        </div>
 
-        <a href="games/cookie-clicker/index.html" class="game-card">
-            <div class="game-icon">🍪</div>
-            <h2>Cookie Clicker</h2>
-            <p>Click cookies to bake more cookies. Build your cookie empire with upgrades and automation in this addictive idle game.</p>
-        </a>
+        <!-- Register Form -->
+        <div id="register-form" style="display: none;">
+            <h2>Register</h2>
+            <div class="form-group">
+                <label for="register-username">Username</label>
+                <input type="text" id="register-username" placeholder="Choose username">
+            </div>
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" placeholder="Choose password">
+            </div>
+            <div class="form-group">
+                <label for="register-confirm">Confirm Password</label>
+                <input type="password" id="register-confirm" placeholder="Confirm password">
+            </div>
+            <button class="btn-primary" id="register-btn">Register</button>
+            <p class="error-msg" id="register-error">Passwords don't match!</p>
+            <p class="success-msg" id="register-success">Account created! Please login.</p>
+            <div class="toggle-form">
+                Already have an account? <a id="show-login">Login here</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main App (after login) -->
+<div id="main-app">
+    <div class="welcome-screen">
+        <h1>Welcome, <span id="username-display"></span>!</h1>
+        <p>This is where the sidebar interface will go</p>
     </div>
 </div>
 
 <script>
-const CORRECT_CODE = "@ster";
+const ACCESS_CODE = "@ster";
 
-function checkCode() {
-    const input = document.getElementById("access-code").value;
-    if (input === CORRECT_CODE) {
-        const lockScreen = document.getElementById("lock-screen");
-        const gameLibrary = document.getElementById("game-library");
-        
-        if (lockScreen) lockScreen.style.display = "none";
-        if (gameLibrary) gameLibrary.classList.add("unlocked");
+// Check if user is already logged in
+window.addEventListener('DOMContentLoaded', function() {
+    const currentUser = localStorage.getItem('aster_currentUser');
+    if (currentUser) {
+        // Skip to main app if already logged in
+        document.getElementById('access-screen').classList.add('hidden');
+        document.getElementById('main-app').classList.add('active');
+        document.getElementById('username-display').textContent = currentUser;
+    }
+});
+
+// Access Code
+document.getElementById('access-btn').addEventListener('click', checkAccessCode);
+document.getElementById('access-code').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkAccessCode();
+});
+
+function checkAccessCode() {
+    const code = document.getElementById('access-code').value;
+    if (code === ACCESS_CODE) {
+        document.getElementById('access-screen').classList.add('hidden');
+        document.getElementById('login-screen').classList.add('active');
     } else {
-        const error = document.getElementById("error");
-        if (error) error.style.display = "block";
+        document.getElementById('access-error').style.display = 'block';
     }
 }
 
-window.addEventListener('DOMContentLoaded', function() {
-    const unlockBtn = document.getElementById('unlock-btn');
-    if (unlockBtn) unlockBtn.addEventListener('click', checkCode);
-
-    const codeInput = document.getElementById("access-code");
-    if (codeInput) {
-        codeInput.addEventListener("keydown", function(e) {
-            if (e.key === "Enter") checkCode();
-        });
-    }
+// Toggle between login and register
+document.getElementById('show-register').addEventListener('click', function() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'block';
+    document.getElementById('register-error').style.display = 'none';
+    document.getElementById('register-success').style.display = 'none';
 });
+
+document.getElementById('show-login').addEventListener('click', function() {
+    document.getElementById('register-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'block';
+    document.getElementById('login-error').style.display = 'none';
+});
+
+// Register
+document.getElementById('register-btn').addEventListener('click', registerUser);
+document.getElementById('register-confirm').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') registerUser();
+});
+
+function registerUser() {
+    const username = document.getElementById('register-username').value.trim();
+    const password = document.getElementById('register-password').value;
+    const confirm = document.getElementById('register-confirm').value;
+
+    if (!username || !password) {
+        document.getElementById('register-error').textContent = 'Please fill all fields!';
+        document.getElementById('register-error').style.display = 'block';
+        return;
+    }
+
+    if (password !== confirm) {
+        document.getElementById('register-error').textContent = 'Passwords don\'t match!';
+        document.getElementById('register-error').style.display = 'block';
+        return;
+    }
+
+    // Check if user already exists
+    const existingUser = localStorage.getItem('aster_user_' + username);
+    if (existingUser) {
+        document.getElementById('register-error').textContent = 'Username already exists!';
+        document.getElementById('register-error').style.display = 'block';
+        return;
+    }
+
+    // Save user
+    localStorage.setItem('aster_user_' + username, password);
+    document.getElementById('register-error').style.display = 'none';
+    document.getElementById('register-success').style.display = 'block';
+
+    // Clear form
+    setTimeout(function() {
+        document.getElementById('register-username').value = '';
+        document.getElementById('register-password').value = '';
+        document.getElementById('register-confirm').value = '';
+        document.getElementById('show-login').click();
+    }, 1500);
+}
+
+// Login
+document.getElementById('login-btn').addEventListener('click', loginUser);
+document.getElementById('login-password').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') loginUser();
+});
+
+function loginUser() {
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!username || !password) {
+        document.getElementById('login-error').textContent = 'Please fill all fields!';
+        document.getElementById('login-error').style.display = 'block';
+        return;
+    }
+
+    // Check credentials
+    const storedPassword = localStorage.getItem('aster_user_' + username);
+
+    if (storedPassword === password) {
+        // Login successful
+        localStorage.setItem('aster_currentUser', username);
+        document.getElementById('login-screen').classList.remove('active');
+        document.getElementById('main-app').classList.add('active');
+        document.getElementById('username-display').textContent = username;
+    } else {
+        document.getElementById('login-error').textContent = 'Invalid username or password!';
+        document.getElementById('login-error').style.display = 'block';
+    }
+}
 </script>
 
 </body>
